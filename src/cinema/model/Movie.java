@@ -7,13 +7,13 @@ public class Movie {
 
     private int id;
     private String name;
-    private LocalDateTime startedAT;
+    private LocalDateTime startedAt;
     private List<Ticket> tickets;
 
-    public Movie(int id, String name, LocalDateTime startedAT, List<Ticket> tickets){
+    public Movie(int id, String name, LocalDateTime startedAt, List<Ticket> tickets){
         this.id = id;
         this.name = name;
-        this.startedAT = startedAT;
+        this.startedAt = startedAt;
         this.tickets = tickets;
     }
 
@@ -25,8 +25,8 @@ public class Movie {
         return name;
     }
 
-    public LocalDateTime getStartedAT() {
-        return startedAT;
+    public LocalDateTime getStartedAt() {
+        return startedAt;
     }
 
     public List<Ticket> getTickets() {
@@ -38,7 +38,7 @@ public class Movie {
         return "Movie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", startedAT=" + startedAT +
+                ", startedAT=" + startedAt +
                 ", tickets=" + tickets +
                 '}';
     }
