@@ -6,4 +6,5 @@ public interface IUserRepository<T, R> {
 
     boolean create(T t) throws ClassNotFoundException;
     List<R> readAll() throws ClassNotFoundException;
+    R authorize(T t) throws ClassNotFoundException;
 }
