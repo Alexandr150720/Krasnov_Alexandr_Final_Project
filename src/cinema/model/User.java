@@ -6,10 +6,9 @@ public class User {
     private String password;
     private UserRole role;
 
-    public User(String login, String password, UserRole role){
+    public User(String login, String password){
         this.login = login;
         this.password = password;
-        this.role = role;
     }
 
     public String getLogin() {
@@ -22,5 +21,9 @@ public class User {
 
     public UserRole getRole() {
         return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

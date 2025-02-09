@@ -3,6 +3,10 @@ import cinema.model.UserDTO;
 import cinema.model.UserRole;
 import cinema.repository.IUserRepository;
 import cinema.repository.UserRepositoryImpl;
+import cinema.service.IUserService;
+import cinema.service.UserService;
+import cinema.view.CinemaView;
+import cinema.view.IView;
 
 public class Main {
 
@@ -13,16 +17,19 @@ public class Main {
         String password = "";
         String driver = "com.mysql.cj.jdbc.Driver";
 
-        User pasha = new User("QWER1", "rewq1", UserRole.ADMIN);
         IUserRepository<User, UserDTO> userRepository = new UserRepositoryImpl(url, userName, password, driver);
 
-        try {
-            System.out.println(userRepository.readAll());
-        }catch (ClassNotFoundException e){
-            e.printStackTrace();
-        }
 
+        IUserService<User, UserDTO> userService = new UserService(userRepository);
+        IView cinemaView = new CinemaView(userService);
 
+        cinemaView.start();
+
+//        try{
+//            userRepository.UserAuthorize(new User("QWER1", "re1q1"));
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
 
 
 
