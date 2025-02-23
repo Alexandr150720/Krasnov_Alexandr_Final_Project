@@ -10,11 +10,23 @@ public class Movie {
     private LocalDateTime startedAt;
     private List<Ticket> tickets;
 
-    public Movie(int id, String name, LocalDateTime startedAt, List<Ticket> tickets){
+    public Movie(String name, LocalDateTime startedAt) {
+        this.name = name;
+        this.startedAt = startedAt;
+    }
+
+    public Movie(int id, String name, LocalDateTime startedAt){
         this.id = id;
         this.name = name;
         this.startedAt = startedAt;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
@@ -39,7 +51,6 @@ public class Movie {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", startedAT=" + startedAt +
-                ", tickets=" + tickets +
                 '}';
     }
 }

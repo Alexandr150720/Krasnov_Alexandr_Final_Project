@@ -9,6 +9,18 @@ public class Ticket {
     private int seatNumber;
     private boolean isBought;
 
+    public Ticket(int id, double price, int seatNumber){
+        this.id = id;
+        this.price = price;
+        this.seatNumber = seatNumber;
+    }
+
+    public Ticket(Movie movie, double price, int seatNumber){
+        this.movie = movie;
+        this.price = price;
+        this.seatNumber = seatNumber;
+    }
+
     public Ticket(int id, Movie movie, double price, int seatNumber, boolean isBought){
         this.id = id;
         this.movie = movie;
@@ -48,5 +60,14 @@ public class Ticket {
 
     public boolean isBought() {
         return isBought;
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "id=" + id +
+                ", price=" + price +
+                ", seatNumber=" + seatNumber +
+                '}';
     }
 }

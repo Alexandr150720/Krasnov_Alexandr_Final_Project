@@ -5,6 +5,8 @@ import cinema.model.UserDTO;
 import cinema.model.UserRole;
 import cinema.repository.IUserRepository;
 
+import java.util.List;
+
 public class UserService implements IUserService<User, UserDTO> {
 
     private IUserRepository<User, UserDTO> userRepository;
@@ -24,11 +26,12 @@ public class UserService implements IUserService<User, UserDTO> {
     }
 
     @Override
-    public UserDTO authorize(User user) {
-        try{
-            return userRepository.authorize(user);
-        } catch (ClassNotFoundException e) {
+    public List<UserDTO> readAllByRole(UserRole userRole) {
+        try {
+            return userRepository.readAllByRole(userRole);
+        } catch (ClassNotFoundException e){
             throw new RuntimeException(e);
         }
     }
+
 }

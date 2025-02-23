@@ -10,14 +10,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
+public class UserRepository implements IUserRepository<User, UserDTO> {
 
     private String url;
     private String userName;
     private String password;
     private String driver;
 
-    public UserRepositoryImpl(String url, String userName, String password, String driver) {
+    public UserRepository(String url, String userName, String password, String driver) {
         this.url = url;
         this.userName = userName;
         this.password = password;
@@ -26,7 +26,6 @@ public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
 
     @Override
     public boolean create(User user) throws ClassNotFoundException {
-
         Class.forName(driver);
         try(Connection conn = DriverManager.getConnection(url, userName, password)){
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (login, password, role) VALUES (?,?,?)");
@@ -34,12 +33,9 @@ public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
             stmt.setString(2, user.getPassword());
             stmt.setString(3, user.getRole().getUserRole());
             stmt.execute();
-        }catch (SQLIntegrityConstraintViolationException e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
             throw new NotUniqueException();
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-
+        } catch (SQLException e){
             return false;
         }
 
@@ -47,11 +43,12 @@ public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
     }
 
     @Override
-    public List<UserDTO> readAll() throws ClassNotFoundException {
+    public List<UserDTO> readAllByRole(UserRole userRole) throws ClassNotFoundException {
         List<UserDTO> users = new ArrayList<>();
         Class.forName(driver);
         try(Connection conn = DriverManager.getConnection(url, userName, password)){
-            PreparedStatement stmt = conn.prepareStatement("SELECT id, login, role FROM users");
+            PreparedStatement stmt = conn.prepareStatement("SELECT id, login, role FROM users WHERE role = ?");
+            stmt.setString(1, userRole.getUserRole());
             stmt.execute();
             ResultSet res = stmt.getResultSet();
             while (res.next()) {
@@ -59,7 +56,7 @@ public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
             }
         }
         catch (SQLException e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return users;
     }
@@ -80,7 +77,6 @@ public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -93,4 +89,6 @@ public class UserRepositoryImpl implements IUserRepository<User, UserDTO> {
 
         return new UserDTO(id, login, role);
     }
+
+
 }
