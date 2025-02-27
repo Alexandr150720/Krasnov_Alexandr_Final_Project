@@ -7,7 +7,7 @@ import cinema.repository.ITicketRepository;
 
 import java.util.List;
 
-public class MovieService implements IMovieService<Movie, Integer, Double> {
+public class MovieService implements IMovieService<Movie, Integer, Double, Integer> {
 
     private ITicketRepository<Ticket, Integer> ticketRepository;
     private IMovieRepository<Movie, Integer> movieRepository;
@@ -44,6 +44,15 @@ public class MovieService implements IMovieService<Movie, Integer, Double> {
     public boolean update(Movie movie) {
         try {
             return movieRepository.update(movie);
+        } catch (ClassNotFoundException e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        try {
+            return movieRepository.delete(id);
         } catch (ClassNotFoundException e){
             return false;
         }

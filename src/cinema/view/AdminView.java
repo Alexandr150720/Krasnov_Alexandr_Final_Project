@@ -2,6 +2,7 @@ package cinema.view;
 
 import cinema.checker.DateTimeChecker;
 import cinema.exception.InvalidDateTimeException;
+import cinema.exception.NotUniqueException;
 import cinema.model.*;
 import cinema.service.IMovieService;
 import cinema.service.ITicketService;
@@ -11,14 +12,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-public class ManagerView implements IRoleView<UserDTO> {
+public class AdminView implements IRoleView<UserDTO> {
 
     private IMovieService<Movie, Integer, Double, Integer> movieService;
     private ITicketService<Ticket, Integer> ticketService;
     private IUserService<User, UserDTO, Integer> userService;
 
-    public ManagerView(IMovieService<Movie, Integer, Double, Integer> movieService, ITicketService<Ticket, Integer> ticketService,
-                       IUserService<User, UserDTO, Integer> userService) {
+    public AdminView(IMovieService<Movie, Integer, Double, Integer> movieService, ITicketService<Ticket, Integer> ticketService,
+                     IUserService<User, UserDTO, Integer> userService) {
         this.movieService = movieService;
         this.ticketService = ticketService;
         this.userService = userService;
@@ -33,7 +34,12 @@ public class ManagerView implements IRoleView<UserDTO> {
             System.out.println("Для возврата билета нажмите 3");
             System.out.println("Для просмотра купленных билетов нажмите 4");
             System.out.println("Для редактирования фильмов нажмите 5");
-            System.out.println("Для выхода из системы нажмите 6");
+            System.out.println("Для создания фильма нажмите 6");
+            System.out.println("Для удаления фильма нажмите 7");
+            System.out.println("Для создания пользователя нажмите 8");
+            System.out.println("Для удаления пользователя нажмите 9");
+            System.out.println("Для редактирования пользователя нажмите 10");
+            System.out.println("Для выхода из системы нажмите 11");
             Scanner scanner = new Scanner(System.in);
             String pressButton = scanner.nextLine();
 
@@ -58,6 +64,11 @@ public class ManagerView implements IRoleView<UserDTO> {
                     for (Ticket ticket : freeTickets) {
                         System.out.println(ticket);
                     }
+                    if (freeTickets.isEmpty()){
+                        System.out.println("Билеты на этот фильм распроданы");
+                        break;
+                    }
+
                     System.out.println("Введите id билета с желаемым местом: ");
                     int ticketId = scanner.nextInt();
                     scanner.nextLine();
@@ -171,6 +182,103 @@ public class ManagerView implements IRoleView<UserDTO> {
                     break;
 
                 case "6":
+                    System.out.println("Введите название фильма: ");
+                    newMovieName = scanner.nextLine();
+                    System.out.println("Введите время начала фильма (в формате ДД.ММ.ГГГГ ЧЧ:ММ): ");
+                    newMovieDateTime = scanner.nextLine();
+                    System.out.println("Введите количество мест на фильм: ");
+                    int ticketNumber = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.println("Введите стоимость билета на фильм: ");
+                    double ticketPrice = scanner.nextDouble();
+
+                    try {
+                        LocalDateTime newStartedAt = DateTimeChecker.check(newMovieDateTime);
+                        Movie newMovie = new Movie(newMovieName, newStartedAt);
+                        boolean isCreated = movieService.add(newMovie, ticketNumber, ticketPrice);
+                        if (isCreated) {
+                            System.out.println("Фильм успешно добавлен");
+                        } else {
+                            System.out.println("Возникла ошибка при добавлении");
+                        }
+                    } catch (InvalidDateTimeException e){
+                        System.out.println("Некорректная дата и время");
+                    }
+
+                    break;
+
+                case "7":
+                    System.out.println("Список фильмов: ");
+                    movies = movieService.readAll();
+                    for (Movie movie : movies) {
+                        System.out.println(movie);
+                    }
+                    System.out.println("Введите id фильма для удаления");
+                    movieId = scanner.nextInt();
+                    boolean isDeleted = movieService.delete(movieId);
+                    if (isDeleted){
+                        System.out.println("Фильм успешно удалён");
+                    } else {
+                        System.out.println("Произошла ошибка при удалении");
+                    }
+                    break;
+
+                case "8":
+                    System.out.println("Введите логин пользователя: ");
+                    String login = scanner.nextLine();
+                    System.out.println("Введите пароль пользователя: ");
+                    String password = scanner.nextLine();
+                    try {
+                        boolean isCreated = userService.create(new User(login, password));
+                        if(isCreated){
+                            System.out.println("Регистрация прошла успешно");
+                        } else {
+                            System.out.println("Возникла ошибка при регистрации");
+                        }
+                    } catch (NotUniqueException e){
+                        System.out.println("Пользователь с таким логином уже существует!");
+                    } catch (RuntimeException e) {
+                        System.out.println("Произошла неизвестная ошибка");
+                    }
+                    break;
+
+                case "9":
+                    System.out.println("Список пользователей: ");
+                    List<UserDTO> users = userService.readAllByRole(UserRole.USER);
+                    for (UserDTO user: users){
+                        System.out.println(user);
+                    }
+                    System.out.println("Введите id пользователя для удаления");
+                    userId = scanner.nextInt();
+                    isDeleted = userService.delete(userId);
+                    if (isDeleted){
+                        System.out.println("Пользователь успешно удалён");
+                    } else {
+                        System.out.println("Произошла ошибка при удалении");
+                    }
+                    break;
+
+                case "10":
+                    System.out.println("Список пользователей: ");
+                    users = userService.readAllByRole(UserRole.USER);
+                    for (UserDTO user: users){
+                        System.out.println(user);
+                    }
+                    System.out.println("Введите id пользователя: ");
+                    userId = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Введите обновлённый пароль: ");
+                    String newUserPassword = scanner.nextLine();
+                    User userForUpdate = new User(userId, newUserPassword);
+                    boolean isUpdated = userService.update(userForUpdate);
+                    if (isUpdated) {
+                        System.out.println("Пользователь успешно отредактирован");
+                    } else {
+                        System.out.println("Возникла ошибка при редактировании");
+                    }
+                    break;
+                case "11":
                     return;
             }
 

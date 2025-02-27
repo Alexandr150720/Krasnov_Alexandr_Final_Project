@@ -1,4 +1,4 @@
-package cinema.checkers;
+package cinema.checker;
 
 import cinema.exception.InvalidDateTimeException;
 

@@ -15,15 +15,18 @@ import java.util.Scanner;
 public class CinemaView implements IView {
 
     private IAuthorizeService<UserDTO, User> authorizeService;
-    private IUserService<User, UserDTO> userService;
+    private IUserService<User, UserDTO, Integer> userService;
     private IRoleView<UserDTO> userView;
     private IRoleView<UserDTO> managerView;
+    private IRoleView<UserDTO> adminView;
 
-    public CinemaView(IAuthorizeService<UserDTO, User> authorizeService, IUserService<User, UserDTO> userService, IRoleView<UserDTO> userView, IRoleView<UserDTO> managerView) {
+    public CinemaView(IAuthorizeService<UserDTO, User> authorizeService, IUserService<User, UserDTO, Integer> userService,
+                      IRoleView<UserDTO> userView, IRoleView<UserDTO> managerView, IRoleView<UserDTO> adminView) {
         this.authorizeService = authorizeService;
         this.userService = userService;
         this.userView = userView;
         this.managerView = managerView;
+        this.adminView = adminView;
     }
 
     @Override
@@ -63,11 +66,12 @@ public class CinemaView implements IView {
                     password = scanner.nextLine();
                     try {
                         UserDTO userDTO = authorizeService.authorize(new User(login, password));
-                        if (userDTO.getRole().equals(UserRole.USER)) {
-                            userView.start(userDTO);
-                        }
-                        else if (userDTO.getRole().equals(UserRole.MANAGER)) {
+                        if (userDTO.getRole().equals(UserRole.ADMIN)) {
+                            adminView.start(userDTO);
+                        } else if (userDTO.getRole().equals(UserRole.MANAGER)) {
                             managerView.start(userDTO);
+                        } else {
+                            userView.start(userDTO);
                         }
                     } catch (UserNotFoundException e){
                         System.out.println("Неверный пароль или логин");
