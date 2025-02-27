@@ -11,10 +11,10 @@ import java.util.Scanner;
 
 public class UserView implements IRoleView<UserDTO> {
 
-    private IMovieService<Movie, Integer, Double> movieService;
+    private IMovieService<Movie, Integer, Double, Integer> movieService;
     private ITicketService<Ticket, Integer> ticketService;
 
-    public UserView(IMovieService<Movie, Integer, Double> movieService, ITicketService<Ticket, Integer> ticketService) {
+    public UserView(IMovieService<Movie, Integer, Double, Integer> movieService, ITicketService<Ticket, Integer> ticketService) {
         this.movieService = movieService;
         this.ticketService = ticketService;
     }

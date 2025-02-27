@@ -55,6 +55,8 @@ public class MovieRepository implements IMovieRepository<Movie, Integer> {
             stmt.setTimestamp(2, dateTimestamp);
             stmt.execute();
             ResultSet generatedKeys = stmt.getGeneratedKeys();
+            generatedKeys.beforeFirst();
+            generatedKeys.next();
 
             return generatedKeys.getInt(1);
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -74,6 +76,19 @@ public class MovieRepository implements IMovieRepository<Movie, Integer> {
             stmt.setTimestamp(2, dateTimestamp);
             stmt.setInt(3, movie.getId());
             stmt.executeUpdate();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean delete(Integer id) throws ClassNotFoundException {
+        Class.forName(driver);
+        try (Connection conn = DriverManager.getConnection(url, userName, password)) {
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM movies WHERE id = ?");
+            stmt.setInt(1, id);
+            stmt.execute();
         } catch (Exception e) {
             return false;
         }
